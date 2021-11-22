@@ -4,7 +4,7 @@ from charmhelpers.core import hookenv
 from charmhelpers.core.host import file_hash
 from charms.layer.kubernetes_common import kubeclientconfig_path
 from charms.reactive import Endpoint
-from charms.reactive import toggle_flag, is_flag_set, clear_flag, set_flag
+from charms.reactive import toggle_flag, clear_flag
 
 
 class CNIPluginProvider(Endpoint):
@@ -13,15 +13,7 @@ class CNIPluginProvider(Endpoint):
         toggle_flag(
             self.expand_name("{endpoint_name}.available"), self.config_available()
         )
-        if is_flag_set(self.expand_name("endpoint.{endpoint_name}.changed")):
-            clear_flag(self.expand_name("{endpoint_name}.configured"))
-            clear_flag(self.expand_name("endpoint.{endpoint_name}.changed"))
-
-    def set_config(self, is_master):
-        """Relays a dict of kubernetes configuration information."""
-        for relation in self.relations:
-            relation.to_publish_raw.update({"is_master": is_master})
-        set_flag(self.expand_name("{endpoint_name}.configured"))
+        clear_flag(self.expand_name("endpoint.{endpoint_name}.changed"))
 
     def config_available(self):
         """Ensures all config from the CNI plugin is available."""

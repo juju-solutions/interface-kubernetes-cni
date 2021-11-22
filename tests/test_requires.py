@@ -5,7 +5,7 @@ import requires
 
 def test_get_config():
     client = requires.CNIPluginClient("cni", [1])
-    config = {"is_master": False}
+    config = {"kubeconfig-hash": "hash"}
     client.all_joined_units.received_raw = config
     assert client.get_config() == config
 
