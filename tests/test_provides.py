@@ -1,17 +1,5 @@
 import charmhelpers
-from charms.reactive import is_flag_set
-
 import provides
-
-
-def test_set_config():
-    provider = provides.CNIPluginProvider("cni", [1, 2])
-    provider.set_config(False)
-    assert [r.to_publish_raw for r in provider.relations] == [
-        {"is_master": False},
-        {"is_master": False},
-    ]
-    assert is_flag_set("cni.configured")
 
 
 def test_get_configs():
