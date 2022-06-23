@@ -10,13 +10,25 @@ db = unitdata.kv()
 
 class CNIPluginClient(Endpoint):
     def manage_flags(self):
-        kubeconfig_hash = self.get_config().get("kubeconfig-hash")
+        config = self.get_config()
+
+        # Announce changes to kubeconfig-hash
+        kubeconfig_hash = config.get("kubeconfig-hash")
         kubeconfig_hash_key = self.expand_name("{endpoint_name}.kubeconfig-hash")
         if kubeconfig_hash:
             set_state(self.expand_name("{endpoint_name}.kubeconfig.available"))
         if kubeconfig_hash != db.get(kubeconfig_hash_key):
             set_state(self.expand_name("{endpoint_name}.kubeconfig.changed"))
             db.set(kubeconfig_hash_key, kubeconfig_hash)
+
+        # Announce changes to service-cidr
+        service_cidr = config.get("service-cidr")
+        service_cidr_key = self.expand_name("{endpoint_name}.service-cidr")
+        if service_cidr:
+            set_state(self.expand_name("{endpoint_name}.service_cidr.available"))
+        if service_cidr != db.get(service_cidr_key):
+            set_state(self.expand_name("{endpoint_name}.service_cidr.changed"))
+            db.set(service_cidr_key, service_cidr)
 
     @when_any("endpoint.{endpoint_name}.joined", "endpoint.{endpoint_name}.changed")
     def changed(self):
