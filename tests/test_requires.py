@@ -30,6 +30,8 @@ def reset_flags_and_kv():
         "cni.kubeconfig.changed",
         "cni.service_cidr.available",
         "cni.service_cidr.changed",
+        "cni.image_registry.available",
+        "cni.image_registry.changed",
     ]:
         clear_flag(flag)
 
@@ -43,6 +45,8 @@ def test_manage_kubeconfig_flags():
     assert is_flag_set("cni.kubeconfig.changed")
     assert not is_flag_set("cni.service_cidr.available")
     assert not is_flag_set("cni.service_cidr.changed")
+    assert not is_flag_set("cni.image_registry.available")
+    assert not is_flag_set("cni.image_registry.changed")
 
     clear_flag("cni.kubeconfig.changed")
     client.manage_flags()
@@ -57,6 +61,8 @@ def test_manage_service_cidr_flags():
     client.manage_flags()
     assert not is_flag_set("cni.kubeconfig.available")
     assert not is_flag_set("cni.kubeconfig.changed")
+    assert not is_flag_set("cni.image_registry.available")
+    assert not is_flag_set("cni.image_registry.changed")
     assert is_flag_set("cni.service_cidr.available")
     assert is_flag_set("cni.service_cidr.changed")
 
@@ -64,3 +70,23 @@ def test_manage_service_cidr_flags():
     client.manage_flags()
     assert is_flag_set("cni.service_cidr.available")
     assert not is_flag_set("cni.service_cidr.changed")
+
+
+@pytest.mark.usefixtures("reset_flags_and_kv")
+def test_manage_image_registry_flags():
+    client = requires.CNIPluginClient("cni", [1])
+    client.all_joined_units.received_raw[
+        "image-registry"
+    ] = "rocks.canonical.com:443/cdk"
+    client.manage_flags()
+    assert not is_flag_set("cni.kubeconfig.available")
+    assert not is_flag_set("cni.kubeconfig.changed")
+    assert not is_flag_set("cni.service_cidr.available")
+    assert not is_flag_set("cni.service_cidr.changed")
+    assert is_flag_set("cni.image_registry.available")
+    assert is_flag_set("cni.image_registry.changed")
+
+    clear_flag("cni.image_registry.changed")
+    client.manage_flags()
+    assert is_flag_set("cni.image_registry.available")
+    assert not is_flag_set("cni.image_registry.changed")

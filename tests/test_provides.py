@@ -99,3 +99,12 @@ def test_set_service_cidr_changed():
         {"service-cidr": "10.152.183.0/24"},
         {"service-cidr": "10.152.183.0/24"},
     ]
+
+
+def test_set_image_registry_changed():
+    provider = provides.CNIPluginProvider("cni", [1, 2])
+    provider.set_image_registry("rocks.canonical.com:443/cdk")
+    assert [r.to_publish_raw for r in provider.relations] == [
+        {"image-registry": "rocks.canonical.com:443/cdk"},
+        {"image-registry": "rocks.canonical.com:443/cdk"},
+    ]

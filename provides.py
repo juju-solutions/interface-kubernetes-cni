@@ -83,3 +83,7 @@ class CNIPluginProvider(Endpoint):
     def set_service_cidr(self, service_cidr):
         for relation in self.relations:
             relation.to_publish_raw.update({"service-cidr": service_cidr})
+
+    def set_image_registry(self, image_registry):
+        for relation in self.relations:
+            relation.to_publish_raw.update({"image-registry": image_registry})

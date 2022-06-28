@@ -30,6 +30,15 @@ class CNIPluginClient(Endpoint):
             set_state(self.expand_name("{endpoint_name}.service_cidr.changed"))
             db.set(service_cidr_key, service_cidr)
 
+        # Announce changes to image-registry
+        image_registry = config.get("image-registry")
+        image_registry_key = self.expand_name("{endpoint_name}.image-registry")
+        if image_registry:
+            set_state(self.expand_name("{endpoint_name}.image_registry.available"))
+        if image_registry != db.get(image_registry_key):
+            set_state(self.expand_name("{endpoint_name}.image_registry.changed"))
+            db.set(image_registry_key, image_registry)
+
     @when_any("endpoint.{endpoint_name}.joined", "endpoint.{endpoint_name}.changed")
     def changed(self):
         """Indicate the relation is connected, and if the relation data is
