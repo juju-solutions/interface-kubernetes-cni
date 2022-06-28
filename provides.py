@@ -79,3 +79,7 @@ class CNIPluginProvider(Endpoint):
         kubeconfig_hash = file_hash(kubeclientconfig_path)
         for relation in self.relations:
             relation.to_publish_raw.update({"kubeconfig-hash": kubeconfig_hash})
+
+    def set_service_cidr(self, service_cidr):
+        for relation in self.relations:
+            relation.to_publish_raw.update({"service-cidr": service_cidr})

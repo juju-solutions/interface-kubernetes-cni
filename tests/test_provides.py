@@ -90,3 +90,12 @@ def test_notify_kubeconfig_changed():
         {"kubeconfig-hash": "hash"},
         {"kubeconfig-hash": "hash"},
     ]
+
+
+def test_set_service_cidr_changed():
+    provider = provides.CNIPluginProvider("cni", [1, 2])
+    provider.set_service_cidr("10.152.183.0/24")
+    assert [r.to_publish_raw for r in provider.relations] == [
+        {"service-cidr": "10.152.183.0/24"},
+        {"service-cidr": "10.152.183.0/24"},
+    ]
